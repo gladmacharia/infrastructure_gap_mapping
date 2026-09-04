@@ -42,7 +42,7 @@ base_dir = Path(__file__).resolve().parents[4]
 
 load_dotenv(base_dir/".env")
 
-GROQ_API_KEY=os.getenv("GROQ_API")
+GROQ_API_KEY=os.getenv("GROQ_API_KEY")
 
 GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 
