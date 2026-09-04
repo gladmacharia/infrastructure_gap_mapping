@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infrastructure Gap Mapping</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="top-bar">
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search for a county, constituency, ward or location...">
+                <button id="search-button" aria-label="Search">Search</button>
+            </div>
+            <button id="dashboard-button" class="dashboard-button">Dashboard</button>
+        </header>
+
+        <main class="main-layout">
+            <section class="map-section">
+                <div class="layer-control-container">
+                    <button id="layers-toggle" class="layers-toggle" type="button" aria-label="Map layers" aria-expanded="false">☷</button>
+
+                    <div class="layer-panel hiddden" id="layer-panel">
+                        <div class="layer-list">
+                            <div class="layer-group">
+                                <h3>Boundaries</h3>
+                                <label class="layer-item">
+                                    <input type="checkbox" id="toggle-counties">
+                                    <span class="layer-symbol boundary-symbol">▦</span>
+                                    <span>Counties</span>
+                                </label>
+                                <label class="layer-item">
+                                    <input type="checkbox" id="toggle-constituencies">
+                                    <span class="layer-symbol boundary-symbol">▧</span>
+                                    <span>Constituencies</span>
+                                </label>
+                                <label class="layer-item">
+                                    <input type="checkbox" id="toggle-wards">
+                                    <span class="layer-symbol boundary-symbol">▤</span>
+                                    <span>Wards</span>
+                                </label>
+                            </div>
+
+                            <div class="layer-group">
+                                <h3>Facilities</h3>
+                                <label class="layer-item">
+                                    <input type="checkbox" id="toggle-schools">
+                                    <span class="layer-symbol">●</span>
+                                    <span>Schools</span>
+                                </label>
+                                <label class="layer-item">
+                                    <input type="checkbox" id="toggle-hospitals">
+                                    <span class="layer-symbol">✚</span>
+                                    <span>Hospitals</span>
+                                </label>
+                                <label class="layer-item">
+                                    <input type="checkbox" id="toggle-police">
+                                    <span class="layer-symbol">◆</span>
+                                    <span>Police</span>
+                                </label>
+                            </div>
+
+                            <div class="layer-group">
+                                <h3>Transport & Utilities</h3>
+                                <label class="layer-item">
+                                    <input type="checkbox" id="toggle-roads">
+                                    <span class="layer-symbol">━</span>
+                                    <span>Roads</span>
+                                </label>
+                                <label class="layer-item">
+                                    <input type="checkbox" id="toggle-fiber">
+                                    <span class="layer-symbol">━━</span>
+                                    <span>Fiber</span>
+                                </label>
+                                <label class="layer-item">
+                                    <input type="checkbox" id="toggle-electricity">
+                                    <span class="layer-symbol">⚡</span>
+                                    <span>Electricity</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="map"></div>
+
+                <div class="north-arrow" aria-label="North">
+                    <span>N</span>
+                    <div class="north-arrow-symbol">▲</div>
+                </div>
+
+                <div class="map-info">
+                    <strong>Kenya Infrastructure Overview</strong>
+                    <span>Explore national infrastructure and service coverage</span>
+                </div>
+            </section>
+
+            <aside id="ai-panel" class="side-panel ai-panel">
+                <div class="panel-header ai-header">
+                    <div>
+                        <h2>INFRASTRUCTURE AI</h2>
+                        <p>I can help you with Analysis</p>
+                    </div>
+                    <div class="ai-status">
+                        <span class="status-dot"></span>
+                    </div>
+                </div>
+
+                <div id="chat-messages" class="chat-messages">
+                    <div class="message assistant-message">
+                        <div class="message-label">AI HELPER</div>
+                        <p>
+                            Hello! I can help you explore infrastructure gaps
+                            and public facilities across Kenya.
+                        </p>
+                        <p>Ask me questions such as:</p>
+                        <ul>
+                            <li>Which wards have zero hospitals?</li>
+                            <li>Which county has the most schools?</li>
+                            <li>Show areas with no police facilities.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <textarea id="ai-question" placeholder="Ask a spatial question..."></textarea>
+                    <button id="send-question" class="send-button">Send</button>
+                </div>
+            </aside>
+        </main>
+
+        <section id="dashboard-panel" class="dashboard-panel hidden">
+            <div class="dashboard-header">
+                <div>
+                    <h2>Infrastructure Dashboard</h2>
+                    <p>National infrastructure and public facility overview</p>
+                </div>
+                <button id="close-dashboard" class="close-button">Close</button>
+            </div>
+
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <span class="card-label">Health Facilities</span>
+                    <strong id="health-count">--</strong>
+                    <small>National total</small>
+                </div>
+
+                <div class="summary-card">
+                    <span class="card-label">Schools</span>
+                    <strong id="school-count">--</strong>
+                    <small>National total</small>
+                </div>
+
+                <div class="summary-card">
+                    <span class="card-label">Police Facilities</span>
+                    <strong id="police-count">--</strong>
+                    <small>National total</small>
+                </div>
+
+                <div class="summary-card">
+                    <span class="card-label">Counties</span>
+                    <strong id="county-count">47</strong>
+                    <small>Administrative units</small>
+                </div>
+            </div>
+
+            <div class="chart-grid">
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <h3>Facilities by Type</h3>
+                        <p>Distribution of public facilities</p>
+                    </div>
+                    <canvas id="facility-chart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <h3>Infrastructure Coverage</h3>
+                        <p>Comparative infrastructure overview</p>
+                    </div>
+                    <canvas id="coverage-chart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <footer class="status-bar">
+            <span id="map-status">● System ready</span>
+            <span>Kenya Infrastructure Gap Mapping</span>
+        </footer>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
