@@ -3,6 +3,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from pathlib import Path
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+
 from backend.core.database import (
     create_db_pool,
     close_db_pool,
@@ -34,6 +38,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+FRONTEND_DIR = Path(__file__).resolve().parents[3] / "frontend"
+
+app.mount("/css", StaticFiles(directory=FRONTEND_DIR / "css"), name="css")
+app.mount("/js", StaticFiles(directory=FRONTEND_DIR / "js"), name="js")
+
+
+@app.get("/", include_in_schema=False)
+async def serve_frontend():
+    return FileResponse(FRONTEND_DIR / "index.html")
 
 origins = [
     "http://127.0.0.1:5501",
