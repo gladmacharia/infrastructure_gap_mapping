@@ -16,6 +16,7 @@ const sendQuestionButton=document.getElementById("send-question");
 const mobileAiToggle=document.getElementById("mobile-ai-toggle");
 const mobileAiClose=document.getElementById("mobile-ai-close");
 const aiPanel=document.getElementById("ai-panel");
+const aiToggle =document.getElementById("ai-toggle");
 const chatMessages=document.getElementById("chat-messages");
 const suggestionButtons=document.querySelectorAll(".suggestion-button");
 const mapStatus=document.getElementById("map-status");
@@ -386,6 +387,15 @@ aiResultLayer=null;
 if(spatialLayers.analysis)delete spatialLayers.analysis;
 updateMapStatus("AI analysis cleared");
 }
+
+aiToggle?.addEventListener( "click", function () {
+        if (!aiPanel) {
+            return;
+        }
+
+        aiPanel.classList.toggle("open");
+    }
+);
 
 sendQuestionButton?.addEventListener("click",function(){
 if(aiQuestion)askAIQuestion(aiQuestion.value);
